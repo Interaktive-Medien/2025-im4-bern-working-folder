@@ -14,17 +14,34 @@ $username = $_POST['username'] ?? '';
 $email    = $_POST['email']    ?? '';
 $password = $_POST['password'] ?? '';
 
-// Insert the new user
-$insert = $pdo->prepare("INSERT INTO benutzer (email, username, password) VALUES (:email, :user, :pass)");
-$insert->execute([
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+// check if user already exists
+$stmt = $pdo->prepare("SELECT * FROM benutzer WHERE email = :email");
+$stmt->execute([
+    ':email' => $email
+]);
+$user = $stmt->fetch();
+
+if ($user) {
+
+    echo "User already exists";
+    exit;
+    
+} else {
+
+    // insert new user
+    $insert = $pdo->prepare("INSERT INTO benutzer (email, username, password) VALUES (:email, :user, :pass)");
+    $insert->execute([
     ':email' => $email,
-    ':pass'  => $password,
+    ':pass'  => $hashedPassword,
     ':user' => $username
 ]);
 
+    // ► Ausgeben – nur zum Test!
+    echo "PHP meldet, Daten erfolgreich empfangen.";
+    echo "Username: {$username}\n";
+    echo "E-Mail:   {$email}\n";
+    echo "Passwort: {$hashedPassword}\n";
+}
 
-// ► Ausgeben – nur zum Test!
-echo "PHP meldet, Daten erfolgreich empfangen.";
-echo "Username: {$username}\n";
-echo "E-Mail:   {$email}\n";
-echo "Passwort: {$password}\n";
