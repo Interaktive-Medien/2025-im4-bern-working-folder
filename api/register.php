@@ -14,20 +14,33 @@ $username = $_POST['username'] ?? '';
 $email    = $_POST['email']    ?? '';
 $password = $_POST['password'] ?? '';
 
+// check if fields are filled
+if (empty($username) || empty($email) || empty($password)) {
+    echo "Bitte fülle alle Felder aus";
+    exit;
+}
+
+// check if password is at least 8 characters long
+if (strlen($password) < 8) {
+    echo "Passwort muss mindestens 8 Zeichen lang sein";
+    exit;
+}
+
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
 // check if user already exists
-$stmt = $pdo->prepare("SELECT * FROM benutzer WHERE email = :email");
+$stmt = $pdo->prepare("SELECT * FROM benutzer WHERE email = :email OR username = :username");
 $stmt->execute([
-    ':email' => $email
+    ':email' => $email,
+    ':username' => $username
 ]);
 $user = $stmt->fetch();
 
 if ($user) {
 
-    echo "User already exists";
+    echo "Username oder E-Mail bereits vergeben";
     exit;
-    
+
 } else {
 
     // insert new user
@@ -36,12 +49,18 @@ if ($user) {
     ':email' => $email,
     ':pass'  => $hashedPassword,
     ':user' => $username
-]);
+    ]);
+
+    if ($insert) {
+        echo "Registrierung erfolgreich";
+    } else {
+        echo "Registrierung fehlgeschlagen";
+    }
 
     // ► Ausgeben – nur zum Test!
-    echo "PHP meldet, Daten erfolgreich empfangen.";
-    echo "Username: {$username}\n";
-    echo "E-Mail:   {$email}\n";
-    echo "Passwort: {$hashedPassword}\n";
+    // echo "PHP meldet, Daten erfolgreich empfangen.";
+    // echo "Username: {$username}\n";
+    // echo "E-Mail:   {$email}\n";
+    // echo "Passwort: {$hashedPassword}\n";
 }
 

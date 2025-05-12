@@ -10,6 +10,18 @@ document
     const email = document.querySelector("#email").value.trim();
     const password = document.querySelector("#password").value;
 
+    // validate if all fields are filled
+    if (!username || !email || !password) {
+      alert("Bitte fülle alle Felder aus");
+      return;
+    }
+
+    // check passwords requirements
+    if (password.length < 8) {
+      alert("Passwort muss mindestens 8 Zeichen lang sein");
+      return;
+    }
+
     // FormData füllt PHPs $_POST automatisch
     const formData = new FormData();
     formData.append("username", username);
@@ -24,6 +36,7 @@ document
       });
       const reply = await res.text(); // register.php schickt nur Klartext zurück
       console.log("Antwort vom Server:\n" + reply);
+      alert(reply);
     } catch (err) {
       console.error("Fehler beim Senden:", err);
     }
