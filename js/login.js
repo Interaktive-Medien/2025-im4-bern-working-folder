@@ -24,6 +24,11 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     const reply = await res.text(); // login.php schickt nur Klartext zurück
     console.log("Antwort vom Server:\n" + reply);
     alert(reply);
+
+    if (reply === "Login erfolgreich") {
+      // redirect to protected.html
+      window.location.href = "protected.html";
+    }
   } catch (err) {
     console.error("Fehler beim Senden:", err);
   }
