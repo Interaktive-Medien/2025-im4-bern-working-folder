@@ -7,8 +7,10 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   const loginInfo = document.querySelector("#username-email").value.trim();
   const password = document.querySelector("#password").value;
 
-  console.log("loginInfo ist:", loginInfo);
-  console.log("passwort ist:", password);
+  if (!loginInfo || !password) {
+    alert("Bitte fülle alle Felder aus");
+    return;
+  }
 
   // FormData füllt PHPs $_POST automatisch
   const formData = new FormData();
